@@ -58,7 +58,7 @@ public class TestRep {
 
         f.setAddress("main street");
 
-        this.session.save(f);
+        this.session.persist(f);
         this.id = f.getId();
         this.session.flush();
 
@@ -70,7 +70,7 @@ public class TestRep {
     @Test
     public void load() throws Exception {
         this.session = this.sessionFactory.openSession();
-        final Factory load = this.session.load(Factory.class, this.id); // (long) 350);
+        final Factory load = this.session.find(Factory.class, this.id); // (long) 350);
 
         System.out.println("factory " + load);
         final Collection<Supplier> suppliers = load.getSuppliers();

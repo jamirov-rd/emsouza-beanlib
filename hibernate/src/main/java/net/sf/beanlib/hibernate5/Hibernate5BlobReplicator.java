@@ -16,7 +16,7 @@
 
 import java.sql.Blob;
 
-import org.hibernate.engine.jdbc.BlobProxy;
+import javax.sql.rowset.serial.SerialBlob;
 
 import net.sf.beanlib.spi.BeanTransformerSpi;
 import net.sf.beanlib.spi.replicator.BlobReplicatorSpi;
@@ -58,8 +58,12 @@ public class Hibernate5BlobReplicator implements BlobReplicatorSpi {
     @Override
     public <T> T replicateBlob(Blob fromBlob, Class<T> toClass) {
         byte[] byteArray = blobUtils.toByteArray(fromBlob);
-        @SuppressWarnings("unchecked")
-        T ret = (T) BlobProxy.generateProxy(byteArray);
-        return ret;
+        try {
+            @SuppressWarnings("unchecked")
+            T ret = (T) new SerialBlob(byteArray);
+            return ret;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to replicate Blob", e);
+        }
     }
 }
